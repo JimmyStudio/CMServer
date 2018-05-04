@@ -55,6 +55,7 @@ class User(Base):
     ips = relationship('IP', backref = 'user')
     brief = Column(Text) # user brief
     token = Column(String(256)) # login token
+    portrait_path = Column(String(256)) # user portrait
 
     def __repr__(self):
         return '%s(%r)' % (self.__class__.__name__, self.eth_address)

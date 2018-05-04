@@ -52,7 +52,7 @@ class post_hot_recommends(tornado.web.RequestHandler):
     @tornado.gen.engine
     def post(self):
         self.set_header('Access-Control-Allow-Origin', '*')
-        token = self.get_argument('user_id')
+        token = self.get_argument('token')
         ret = DBhelper.get_hot_recommend(token)
         self.write(ret)
         self.finish()

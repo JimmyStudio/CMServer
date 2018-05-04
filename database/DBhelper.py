@@ -16,6 +16,9 @@ import json
 import copy
 from sqlalchemy import and_
 import time
+from utils import tool
+
+
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -61,14 +64,16 @@ def get_hot_recommend(token,limit=12,type=1):
     rets = []
     for ip in ips:
         ip_info = session.query(IP).filter(IP.id == ip.ip_id).first()
+        ret = copy.deepcopy(ip_info.__dict__)
+        del ret['_sa_instance_state']
+        ret['price'] = ip.price
+        ret['duration'] = tool.conver_sec(ret['duration'])
         tags = []
         # ip 标签
         for tag in ip_info.tags:
             tg = copy.deepcopy(tag.__dict__)
             del tg['_sa_instance_state']
             tags.append(tg)
-        ret = copy.deepcopy(ip_info.__dict__)
-        del ret['_sa_instance_state']
         # 用户信息
         user_info = session.query(User).filter(User.id == ip_info.sender_id).first()
         ret['author_name'] = user_info.username

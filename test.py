@@ -15,5 +15,7 @@ import requests
 import json
 
 
-r = requests.get('http://localhost:8888/recommend')
+r = requests.post('http://localhost:8888/recommend',
+                  {'user_id':2})
+
 print(json.loads(r.text)['list'])

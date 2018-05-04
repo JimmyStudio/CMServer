@@ -14,12 +14,14 @@ __author__ = 'Jimmy'
 from sqlalchemy import create_engine, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import ForeignKey
-from sqlalchemy import Column, String, Integer, Text, Numeric, Boolean
+from sqlalchemy import Column, String, Integer, Text, Numeric, Boolean, Float
 from sqlalchemy.orm import sessionmaker, relationship
 import hashlib
 
 engine = create_engine('mysql+mysqlconnector://root:846880@localhost:3306/cmdb?charset=utf8')
 Base = declarative_base()
+
+# price coin 均为整数 22位 18位整数+4位小数
 
 # user - ip 多对多 版权占有额度
 class Share(Base):
@@ -29,7 +31,7 @@ class Share(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
     ip_id = Column(Integer)
-    share = Column(Numeric(18,10)) # balance of token
+    share = Column(Integer) # balance of token
 
 # tag - IP 多对多
 tag_ip = Table(
@@ -49,8 +51,10 @@ class User(Base):
     email = Column(String(64),index=True)
     phone = Column(String(64),index=True)
     eth_address = Column(String(256),index=True)  # eth address
-    token = Column(Numeric(18,10)) # balance of token
+    coin = Column(Integer) # balance of token
     ips = relationship('IP', backref = 'user')
+    brief = Column(Text) # user brief
+    token = Column(String(256)) # login token
 
     def __repr__(self):
         return '%s(%r)' % (self.__class__.__name__, self.eth_address)
@@ -64,7 +68,7 @@ class Market(Base):
     ip_id = Column(Integer, index=True)
     ip_type = Column(Integer, index=True) # 0 pic 1 music 2 video 3 doc
     manager_id = Column(Integer, index=True) # the person who put on market must have share of the ip
-    price = Column(Numeric(18,10)) # price
+    price = Column(Integer) # price
     sell_type = Column(Integer, index=True) # 0 not available ; 1 for use ; 2 for copyrights
 
 # 我喜欢的

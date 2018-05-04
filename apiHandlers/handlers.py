@@ -15,22 +15,33 @@ import tornado.httpclient
 import tornado.gen
 import json
 import os
-from database import helper
+from database import DBhelper
 
 # from dataHandlers import excelReporter as er
 
-# class IndexHandler(tornado.web.RequestHandler):
-#     @tornado.web.asynchronous
-#     @tornado.gen.engine
-#     def get(self):
-#         self.render('index.html')
-
-class get_hot_recommends(tornado.web.RequestHandler):
+# arg:
+## phone
+## password
+class post_login(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine
-    def get(self):
+    def post(self):
         self.set_header('Access-Control-Allow-Origin', '*')
-        ret = helper.get_hot_recommend()
+        phone = self.get_argument('phone')
+        pw = self.get_argument('password')
+        ret = DBhelper.login(phone, pw)
+        self.write(ret)
+        self.finish()
+
+# arg:
+## token
+class post_hot_recommends(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        token = self.get_argument('user_id')
+        ret = DBhelper.get_hot_recommend(token)
         self.write(ret)
         self.finish()
 

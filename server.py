@@ -26,7 +26,7 @@ if __name__ == "__main__":
     tornado.options.parse_command_line()
     app = tornado.web.Application(
         handlers=[
-            (r"/recommend", handlers.get_hot_recommends),
+            (r"/recommend", handlers.post_hot_recommends),
             (r"/upload", handlers.upload_handler),
             # (r".*", handlers.IndexHandler)
         ],

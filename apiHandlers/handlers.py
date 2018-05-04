@@ -17,7 +17,19 @@ import json
 import os
 from database import DBhelper
 
-# from dataHandlers import excelReporter as er
+
+
+# arg:
+## token
+class post_logout(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        token = self.get_argument('token')
+        ret = DBhelper.logout(token)
+        self.write(ret)
+        self.finish()
 
 # arg:
 ## phone

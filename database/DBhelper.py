@@ -11,7 +11,7 @@ description:
 
 __author__ = 'Jimmy'
 
-from database.dao import *
+from database.DAO import *
 import json
 import copy
 from sqlalchemy import and_
@@ -20,6 +20,21 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # 001 用户名或密码错误
+# 002 登录过期 token不存在
+
+# 100 成功
+
+def logout(token):
+    users = session.query(User).filter(User.token == token).all()
+    if len(users) == 1:
+        # clear token
+        session.query(User).filter(User.token == token).update({User.token:''})
+        session.flush()
+        session.commit()
+        return json.dumps({'err':'100', 'message':'成功'})
+    else:
+        return json.dumps({'err':'002', 'message':'登录已过期'})
+
 
 def login(phone, password):
     hpw = hashlib.md5()

@@ -32,10 +32,12 @@ def logout(token):
     if len(users) == 1:
         # clear token
         session.query(User).filter(User.token == token).update({User.token:''})
-        session.flush()
+        # session.flush()
         session.commit()
+        session.close()
         return json.dumps({'err':'100', 'message':'成功'})
     else:
+        session.close()
         return json.dumps({'err':'002', 'message':'登录已过期'})
 
 
@@ -52,10 +54,12 @@ def login(phone, password):
         token = hpw.hexdigest()
         user['token']= token
         session.query(User).filter(and_(User.phone == phone, User.password == pw)).update({User.token:token})
-        session.flush()
+        # session.flush()
         session.commit()
+        session.close()
         return json.dumps(user)
     else:
+        session.close()
         return json.dumps({'err':'001', 'message':'用户名或密码错误!'})
 
 
@@ -90,6 +94,7 @@ def get_hot_recommend(token,limit=12,type=1):
         else:
             ret['like'] = False
         rets.append(ret)
+    session.close()
     return json.dumps({'list': rets})
 
 

@@ -55,6 +55,8 @@ def login(phone, password):
         user['token']= token
         session.query(User).filter(and_(User.phone == phone, User.password == pw)).update({User.token:token})
         # session.flush()
+        user['err'] = '100'
+        user['message'] = '成功'
         session.commit()
         session.close()
         return json.dumps(user)

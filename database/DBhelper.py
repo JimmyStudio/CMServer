@@ -40,6 +40,7 @@ def getMyWorks(token):
             del ip_dict['_sa_instance_state']
             sellinfo = session.query(Market).filter(Market.ip_id == ip.id).first()
             ip_dict['price'] = None
+            ip_dict['duration'] = tool.conver_sec(ip_dict['duration'])
             if sellinfo:
                 ip_dict['price'] = sellinfo.price
             tags = []

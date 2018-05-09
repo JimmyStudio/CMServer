@@ -15,7 +15,7 @@ import requests
 import json
 
 
-r = requests.post('http://localhost:8888/recommend',
-                  {'token':''})
+r = requests.post('http://localhost:8888/myworks',
+                  {'token':'f8296619671d3fd56e0aa0d6fc7f33cb'})
 
 print(json.loads(r.text))

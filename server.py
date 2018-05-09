@@ -26,6 +26,7 @@ if __name__ == "__main__":
     tornado.options.parse_command_line()
     app = tornado.web.Application(
         handlers=[
+            (r"/myworks", handlers.post_myworks),
             (r"/login", handlers.post_login),
             (r"/logout", handlers.post_logout),
             (r"/recommend", handlers.post_hot_recommends),

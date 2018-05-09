@@ -17,7 +17,17 @@ import json
 import os
 from database import DBhelper
 
-
+# arg:
+## token
+class post_myworks(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        token = self.get_argument('token')
+        ret = DBhelper.getMyWorks(token)
+        self.write(ret)
+        self.finish()
 
 # arg:
 ## token

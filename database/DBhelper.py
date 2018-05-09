@@ -27,6 +27,41 @@ session = Session()
 
 # 100 成功
 
+
+def getMyWorks(token):
+    user = checkToken(token)
+    if user == '002':
+        return json.dumps({'err':'002', 'message':'登录已过期'})
+    else:
+        retlist = []
+        ips = session.query(IP).filter(IP.sender_id == user.id).all()
+        for ip in ips:
+            ip_dict = copy.deepcopy(ip.__dict__)
+            del ip_dict['_sa_instance_state']
+            sellinfo = session.query(Market).filter(Market.ip_id == ip.id).first()
+            ip_dict['price'] = None
+            if sellinfo:
+                ip_dict['price'] = sellinfo.price
+            tags = []
+            # ip 标签
+            for tag in ip.tags:
+                tg = copy.deepcopy(tag.__dict__)
+                del tg['_sa_instance_state']
+                tags.append(tg)
+            ip_dict['tags'] = tags
+            retlist.append(ip_dict)
+        session.close()
+        return json.dumps({'err':'100', 'message':'成功', 'list': retlist})
+
+
+def checkToken(token):
+    users = session.query(User).filter(User.token == token).all()
+    session.close()
+    if len(users) == 1:
+        return users[0]
+    else:
+        return '002'
+
 def logout(token):
     users = session.query(User).filter(User.token == token).all()
     if len(users) == 1:
@@ -101,4 +136,4 @@ def get_hot_recommend(token,limit=12,type=1):
 
 
 if __name__ == "__main__":
-    print(get_hot_recommend('5d69fdcf8e9517617d035070adb48948'))
+    print(getMyWorks('f8296619671d3fd56e0aa0d6fc7f33cb'))

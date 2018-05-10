@@ -72,18 +72,26 @@ class upload_handler(tornado.web.RequestHandler):
     @tornado.gen.engine
     def post(self):
         self.set_header('Access-Control-Allow-Origin', '*')
-
-        file_metas = self.request.files["upload_image"]  # 获取上传文件信息 fromdata => upload_image
+        file_metas = self.request.files["upload_file"]  # 获取上传文件信息 fromdata => upload_image
         for meta in file_metas:  # 循环文件信息
             file_name = meta['filename']  # 获取文件的名称
-            file_path = os.path.join('www/static', file_name)
+            print(meta['content_type'])
+            if meta['content_type'] == 'image/jpeg':
+                file_path = os.path.join('www/static/images', file_name)
+            elif meta['content_type'] == 'audio/mp3':
+                file_path = os.path.join('www/static/sounds', file_name)
+            else:
+                file_path = ''
+                break
             with open(file_path, 'wb') as up:  # os拼接文件保存路径，以字节码模式打开
                 up.write(meta['body'])
-
-        ret = {'path': file_path}
+        if file_path :
+            file_path = file_path[3:]
+            ret = {'path': file_path, 'err': '100', 'message': '成功'}
+        else:
+            ret = {'err': '003', 'message': '文件类型错误'}
         self.write(ret)
         self.finish()
-
 
 if __name__ == '__main__':
     file_name = 'dsa.img'

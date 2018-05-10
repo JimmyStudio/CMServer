@@ -23,6 +23,7 @@ Session = sessionmaker(bind=engine)
 
 # 001 用户名或密码错误
 # 002 登录过期 token不存在
+# 003 文件类型错误
 
 # 100 成功
 

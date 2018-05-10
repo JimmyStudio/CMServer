@@ -14,8 +14,10 @@ __author__ = 'Jimmy'
 import requests
 import json
 
+fp = 'www/static/images/test.jp'
+print(fp[3:])
 
-r = requests.post('http://localhost:8888/myworks',
-                  {'token':'f8296619671d3fd56e0aa0d6fc7f33cb'})
-
-print(json.loads(r.text))
+# r = requests.post('http://localhost:8888/myworks',
+#                   {'token':'f8296619671d3fd56e0aa0d6fc7f33cb'})
+#
+# print(json.loads(r.text))

@@ -14,10 +14,13 @@ __author__ = 'Jimmy'
 import requests
 import json
 
-fp = 'www/static/images/test.jp'
-print(fp[3:])
+r = requests.post('http://localhost:8888/uploadmywork',
+                  {'token':'55a7dfc94a2c7bb872595d6936e1839e',
+                    'local_path':'/asfd.mp3',
+                    'name':'哈哈哈',
+                    'bref':'测试测试测试',
+                   'cover_image_path':'/dsad.jpg',
+                    'price':100000
+                   })
 
-# r = requests.post('http://localhost:8888/myworks',
-#                   {'token':'f8296619671d3fd56e0aa0d6fc7f33cb'})
-#
-# print(json.loads(r.text))
+print(json.loads(r.text))

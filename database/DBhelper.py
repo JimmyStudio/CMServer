@@ -35,6 +35,8 @@ def uploadWork(token, local_path, name, brief, cover_image_path, price):
     else:
         session = Session()
         ip = IP(ip_type=1,
+                duration=66,
+                use_sell_count=0,
                 sender_id =user.id,
                 name=name,
                 brief=brief,

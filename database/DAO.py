@@ -91,7 +91,7 @@ class IP(Base):
     ip_type = Column(Integer) # 0 pic 1 music 2 video 3 doc
     duration = Column(Integer) # duration of music or video
     name = Column(String(256)) # ip name
-    desc = Column(Text) # ip description
+    bref = Column(Text) # ip description
     local_path = Column(String(256)) # local path in server
     cover_image_path = Column(String(256)) # local path in server of cover image
     feature_hash = Column(String(256)) # feature hash of the ip

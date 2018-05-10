@@ -18,6 +18,23 @@ import os
 from database import DBhelper
 
 # arg:
+## token, local_path, name, bref, cover_image_path, price
+class post_upload_mywork(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        token = self.get_argument('token')
+        local_path = self.get_argument('local_path')
+        name = self.get_argument('name')
+        bref = self.get_argument('bref')
+        cover_image_path = self.get_argument('cover_image_path')
+        price = self.get_argument('price')
+        ret = DBhelper.uploadWork(token, local_path, name, bref, cover_image_path, price)
+        self.write(ret)
+        self.finish()
+
+# arg:
 ## token
 class post_myworks(tornado.web.RequestHandler):
     @tornado.web.asynchronous

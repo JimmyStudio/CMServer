@@ -28,6 +28,34 @@ Session = sessionmaker(bind=engine)
 # 100 成功
 
 
+def uploadWork(token, local_path, name, bref, cover_image_path, price):
+    user = checkToken(token)
+    if user == '002':
+        return json.dumps({'err': '002', 'message': '登录已过期'})
+    else:
+        session = Session()
+        ip = IP(ip_type=1,
+                sender_id =user.id,
+                name=name,
+                bref=bref,
+                local_path=local_path,
+                cover_image_path =cover_image_path)
+        session.add(ip)
+        session.commit()
+
+        session2 = Session()
+        ipinfo = session2.query(IP).filter(and_(IP.sender_id == user.id, IP.local_path == local_path)).first()
+        market = Market(ip_id=ipinfo.id,
+                        ip_type = ipinfo.ip_type,
+                        manager_id = user.id,
+                        price = price,
+                        sell_type = 1
+                        )
+        session2.add(market)
+        session2.commit()
+        return json.dumps({'err':'100', 'message':'成功'})
+
+
 def getMyWorks(token):
     user = checkToken(token)
     if user == '002':
@@ -134,4 +162,10 @@ def get_hot_recommend(token,limit=12,type=1):
 
 
 if __name__ == "__main__":
-    print(getMyWorks('f8296619671d3fd56e0aa0d6fc7f33cb'))
+    uploadWork(token='55a7dfc94a2c7bb872595d6936e1839e',
+               local_path='/asfd.mp3',
+               name='哈哈哈',
+               bref='测试测试测试',
+               cover_image_path='/dsad.jpg',
+               price=100000
+               )

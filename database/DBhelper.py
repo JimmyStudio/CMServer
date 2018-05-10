@@ -28,7 +28,7 @@ Session = sessionmaker(bind=engine)
 # 100 成功
 
 
-def uploadWork(token, local_path, name, bref, cover_image_path, price):
+def uploadWork(token, local_path, name, brief, cover_image_path, price):
     user = checkToken(token)
     if user == '002':
         return json.dumps({'err': '002', 'message': '登录已过期'})
@@ -37,7 +37,7 @@ def uploadWork(token, local_path, name, bref, cover_image_path, price):
         ip = IP(ip_type=1,
                 sender_id =user.id,
                 name=name,
-                bref=bref,
+                brief=brief,
                 local_path=local_path,
                 cover_image_path =cover_image_path)
         session.add(ip)

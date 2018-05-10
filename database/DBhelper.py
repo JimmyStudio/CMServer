@@ -20,7 +20,6 @@ from utils import tool
 
 
 Session = sessionmaker(bind=engine)
-session = Session()
 
 # 001 用户名或密码错误
 # 002 登录过期 token不存在
@@ -34,6 +33,7 @@ def getMyWorks(token):
         return json.dumps({'err':'002', 'message':'登录已过期'})
     else:
         retlist = []
+        session = Session()
         ips = session.query(IP).filter(IP.sender_id == user.id).all()
         for ip in ips:
             ip_dict = copy.deepcopy(ip.__dict__)
@@ -51,33 +51,31 @@ def getMyWorks(token):
                 tags.append(tg)
             ip_dict['tags'] = tags
             retlist.append(ip_dict)
-        session.close()
         return json.dumps({'err':'100', 'message':'成功', 'list': retlist})
 
 
 def checkToken(token):
+    session = Session()
     users = session.query(User).filter(User.token == token).all()
-    session.close()
     if len(users) == 1:
         return users[0]
     else:
         return '002'
 
 def logout(token):
+    session = Session()
     users = session.query(User).filter(User.token == token).all()
     if len(users) == 1:
         # clear token
         session.query(User).filter(User.token == token).update({User.token:''})
-        # session.flush()
         session.commit()
-        session.close()
         return json.dumps({'err':'100', 'message':'成功'})
     else:
-        session.close()
         return json.dumps({'err':'002', 'message':'登录已过期'})
 
 
 def login(phone, password):
+    session = Session()
     hpw = hashlib.md5()
     hpw.update(password.encode(encoding='utf-8'))
     pw = hpw.hexdigest()
@@ -94,14 +92,13 @@ def login(phone, password):
         user['err'] = '100'
         user['message'] = '成功'
         session.commit()
-        session.close()
         return json.dumps(user)
     else:
-        session.close()
         return json.dumps({'err':'001', 'message':'用户名或密码错误!'})
 
 
 def get_hot_recommend(token,limit=12,type=1):
+    session = Session()
     ips = session.query(Market).filter(Market.sell_type==type).limit(limit).all()
     rets = []
     for ip in ips:
@@ -132,7 +129,6 @@ def get_hot_recommend(token,limit=12,type=1):
         else:
             ret['like'] = False
         rets.append(ret)
-    session.close()
     return json.dumps({'list': rets})
 
 

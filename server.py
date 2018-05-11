@@ -32,6 +32,7 @@ if __name__ == "__main__":
             (r"/recommend", handlers.post_hot_recommends),
             (r"/upload", handlers.upload_handler),
             (r"/uploadmywork", handlers.post_upload_mywork),
+            (r"/soundmart", handlers.post_soundmart),
         ],
         template_path=os.path.join(os.path.dirname(__file__), "www"),
         static_path=os.path.join(os.path.dirname(__file__), "www/static")

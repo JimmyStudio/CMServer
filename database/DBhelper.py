@@ -162,6 +162,39 @@ def get_hot_recommend(token,limit=12,type=1):
         rets.append(ret)
     return json.dumps({'list': rets})
 
+def get_soundmart(token,type=1):
+    session = Session()
+    ips = session.query(Market).filter(Market.sell_type==type).all()
+    rets = []
+    for ip in ips:
+        ip_info = session.query(IP).filter(IP.id == ip.ip_id).first()
+        ret = copy.deepcopy(ip_info.__dict__)
+        del ret['_sa_instance_state']
+        ret['price'] = ip.price
+        ret['duration'] = tool.conver_sec(ret['duration'])
+        tags = []
+        # ip 标签
+        for tag in ip_info.tags:
+            tg = copy.deepcopy(tag.__dict__)
+            del tg['_sa_instance_state']
+            tags.append(tg)
+        # 用户信息
+        user_info = session.query(User).filter(User.id == ip_info.sender_id).first()
+        ret['author_name'] = user_info.username
+        ret['tags'] = tags
+        # 是否收藏
+        users = session.query(User).filter(User.token == token).all()
+        if len(users) == 1:
+            user = users[0]
+            like_info = session.query(Like).filter(and_(Like.user_id == user.id, Like.ip_id == ip_info.id)).all()
+            if len(like_info) == 0:
+                ret['like'] = False
+            else:
+                ret['like'] = True
+        else:
+            ret['like'] = False
+        rets.append(ret)
+    return json.dumps({'list': rets})
 
 if __name__ == "__main__":
     uploadWork(token='55a7dfc94a2c7bb872595d6936e1839e',

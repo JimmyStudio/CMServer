@@ -18,7 +18,12 @@ from sqlalchemy import Column, String, Integer, Text, Numeric, Boolean, Float
 from sqlalchemy.orm import sessionmaker, relationship
 import hashlib
 
-engine = create_engine('mysql+mysqlconnector://root:846880@localhost:3306/cmdb?charset=utf8')
+import utils.etc as  etc
+
+# show global variables like '%timeout%'; pool_recyle < interactive_timeout
+# show variables like 'max_connections'; mysql default 151
+engine = create_engine('mysql+mysqlconnector://'+etc.mysql_user+':'+etc.mysql_passwd+'@'+etc.mysql_host+':'+str(etc.mysql_port)+'/'+etc.host_name+'?charset=utf8',encoding="utf-8",pool_size=100, pool_recycle=3600, echo=False)
+# engine = create_engine('mysql+mysqlconnector://root:846880@localhost:3306/cmdb?charset=utf8')
 Base = declarative_base()
 
 # price coin 均为整数 22位 18位整数+4位小数

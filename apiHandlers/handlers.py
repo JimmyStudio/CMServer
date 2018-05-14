@@ -18,6 +18,21 @@ import os
 from database import DBhelper
 
 # arg:
+## phone
+## password
+class post_register(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        phone = self.get_argument('phone')
+        pw = self.get_argument('password')
+        ret = DBhelper.register(phone, pw)
+        self.write(ret)
+        self.finish()
+
+
+# arg:
 ## token
 class post_soundmart(tornado.web.RequestHandler):
     @tornado.web.asynchronous
@@ -30,7 +45,7 @@ class post_soundmart(tornado.web.RequestHandler):
         self.finish()
 
 # arg:
-## token, local_path, name, bref, cover_image_path, price
+## token, local_path, name, bref, cover_image_path, price sell_type
 class post_upload_mywork(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine
@@ -42,7 +57,8 @@ class post_upload_mywork(tornado.web.RequestHandler):
         bref = self.get_argument('brief')
         cover_image_path = self.get_argument('cover_image_path')
         price = self.get_argument('price')
-        ret = DBhelper.uploadWork(token, local_path, name, bref, cover_image_path, price)
+        sell_type = self.get_argument('sell_type')
+        ret = DBhelper.uploadWork(token, local_path, name, bref, cover_image_path, price, sell_type)
         self.write(ret)
         self.finish()
 
@@ -69,6 +85,7 @@ class post_logout(tornado.web.RequestHandler):
         ret = DBhelper.logout(token)
         self.write(ret)
         self.finish()
+
 
 # arg:
 ## phone

@@ -100,7 +100,7 @@ class IP(Base):
     cover_image_path = Column(String(256)) # local path in server of cover image
     feature_hash = Column(String(256)) # feature hash of the ip
     ipfs_hash = Column(String(256)) # ipfs location
-    use_sell_count = Column(Integer) # sell count for self usage
+    # use_sell_count = Column(Integer) # sell count for self usage
     # copyright_sell_count = Column(Integer) # sell count for copyright shares
     transactions = relationship('Transaction', backref = 'ip')
     sell_type = Column(Integer, index=True) # 0 not available ; 1 for use ; 2 for copyrights

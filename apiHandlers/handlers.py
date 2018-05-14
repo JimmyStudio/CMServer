@@ -43,8 +43,8 @@ class post_buywork(tornado.web.RequestHandler):
     def post(self):
         self.set_header('Access-Control-Allow-Origin', '*')
         token = self.get_argument('token')
-        ip_id = self.get_argument('ip_id')
-        from_user_id = self.get_argument('from_user_id')
+        ip_id = self.get_argument('ipid')
+        from_user_id = self.get_argument('fromuserid')
         price = self.get_argument('price')
         ret = DBhelper.buyWork(token, ip_id, from_user_id, price)
         self.write(ret)

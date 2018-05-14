@@ -55,6 +55,7 @@ def buyWork(token, ip_id, from_user_id, price):
         if user.id == from_user_id :
             return json.dumps({'err': '007', 'message': '无法购买您自己发布的作品！'})
         else:
+            price = int(price)
             if user.coin < price:
                 return json.dumps({'err': '005', 'message': '代币余额不足！'})
             else:

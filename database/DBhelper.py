@@ -272,13 +272,11 @@ def register(phone, password):
                     coin = 0,
                     portrait_path = None
                     )
+        user_dict = copy.deepcopy(user.__dict__)
         session.add(user)
         session.commit()
-        user_dict = copy.deepcopy(user.__dict__)
         del user_dict['_sa_instance_state']
-        user_dict['err'] = '100'
-        user_dict['message'] = '注册成功'
-        return json.dumps(user_dict)
+        return json.dumps({'user':user_dict,'err':'100', 'message':'注册成功！'})
 
 
 def login(phone, password):
@@ -366,7 +364,7 @@ def get_sounds(token, limit=0, type=1):
 
 
 if __name__ == "__main__":
-    print(json.loads(getMyWorks('b0c5e35e3ac0d75fd520de00c801ad56')))
+    print(json.loads(register('13818617241','123')))
     # uploadWork(token='d52b43143faf70237fd59944862b2055',
     #            local_path='/static/sounds/9711.mp3',
     #            name='发生该地块',

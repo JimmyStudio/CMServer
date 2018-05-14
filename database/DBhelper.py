@@ -35,8 +35,32 @@ Session = sessionmaker(bind=engine)
 # 005 代币余额不足
 # 006 重复购买
 # 007 无法购买自己的作品
+# 008 无法收藏自己发布的作品
 
 # 100 成功
+
+
+def like(token, ip_id):
+    user = checkToken(token)
+    if user == '002':
+        return json.dumps({'err': '002', 'message': '登录已过期！'})
+    else:
+        session = Session()
+        ip = session.query(IP).filter(IP.id == ip_id).first()
+        if ip.sender_id == user.id :
+            return json.dumps({'err': '008', 'message': '无法收藏自己发布的作品！'})
+        else:
+            like = session.query(Like).filter(and_(Like.ip_id == ip_id, Like.user_id == user.id)).first()
+            if like :
+                session.delete(like)
+                session.commit()
+                return json.dumps({'err': '100', 'message': '取消收藏成功！'})
+            else:
+                newlike = Like(ip_id = ip_id, user_id=user.id)
+                session.add(newlike)
+                session.commit()
+                return json.dumps({'err': '100', 'message': '收藏成功！'})
+
 
 def getUserInfo(token):
     user = checkToken(token)

@@ -16,12 +16,22 @@ import tornado.gen
 import json
 import os
 from database import DBhelper
-
 # arg:
 ## token
 ## ip_id
-## form
-## price
+class post_like(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        token = self.get_argument('token')
+        ipid = self.get_argument('ipid')
+        ret = DBhelper.like(token, ipid)
+        self.write(ret)
+        self.finish()
+
+# arg:
+## token
 class post_user_info(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine

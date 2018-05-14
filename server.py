@@ -35,6 +35,8 @@ if __name__ == "__main__":
             (r"/soundmart", handlers.post_soundmart),
             (r"/register", handlers.post_register),
             (r"/buysound", handlers.post_buywork),
+            (r"/userinfo", handlers.post_user_info),
+
         ],
         template_path=os.path.join(os.path.dirname(__file__), "www"),
         static_path=os.path.join(os.path.dirname(__file__), "www/static")

@@ -22,6 +22,21 @@ from database import DBhelper
 ## ip_id
 ## form
 ## price
+class post_user_info(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        token = self.get_argument('token')
+        ret = DBhelper.getUserInfo(token)
+        self.write(ret)
+        self.finish()
+
+# arg:
+## token
+## ip_id
+## form
+## price
 class post_buywork(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine

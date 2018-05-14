@@ -37,6 +37,15 @@ Session = sessionmaker(bind=engine)
 
 # 100 成功
 
+def getUserInfo(token):
+    user = checkToken(token)
+    if user == '002':
+        return json.dumps({'err': '002', 'message': '登录已过期！'})
+    else:
+        ret = copy.deepcopy(user.__dict__)
+        del ret['_sa_instance_state']
+        return json.dumps({'user':ret,'err':'100', 'message':'成功'})
+
 def buyWork(token, ip_id, from_user_id, price):
     user = checkToken(token)
     if user == '002':

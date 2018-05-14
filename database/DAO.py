@@ -23,20 +23,19 @@ import utils.etc as  etc
 # show global variables like '%timeout%'; pool_recyle < interactive_timeout
 # show variables like 'max_connections'; mysql default 151
 engine = create_engine('mysql+mysqlconnector://'+etc.mysql_user+':'+etc.mysql_passwd+'@'+etc.mysql_host+':'+str(etc.mysql_port)+'/'+etc.host_name+'?charset=utf8',encoding="utf-8",pool_size=100, pool_recycle=3600, echo=False)
-# engine = create_engine('mysql+mysqlconnector://root:846880@localhost:3306/cmdb?charset=utf8')
 Base = declarative_base()
 
 # price coin 均为整数 22位 18位整数+4位小数
 
 # user - ip 多对多 版权占有额度
-class Share(Base):
-
-    __tablename__ = 'share'
-
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer)
-    ip_id = Column(Integer)
-    share = Column(Integer) # balance of token
+# class Share(Base):
+#
+#     __tablename__ = 'share'
+#
+#     id = Column(Integer, primary_key=True)
+#     user_id = Column(Integer)
+#     ip_id = Column(Integer)
+#     share = Column(Integer) # balance of token
 
 # tag - IP 多对多
 tag_ip = Table(
@@ -66,16 +65,16 @@ class User(Base):
         return '%s(%r)' % (self.__class__.__name__, self.eth_address)
 
 # 市场
-class Market(Base):
-
-    __tablename__ = 'market'
-
-    id = Column(Integer, primary_key=True)
-    ip_id = Column(Integer, index=True)
-    ip_type = Column(Integer, index=True) # 0 pic 1 music 2 video 3 doc
-    manager_id = Column(Integer, index=True) # the person who put on market must have share of the ip
-    price = Column(Integer) # price
-    sell_type = Column(Integer, index=True) # 0 not available ; 1 for use ; 2 for copyrights
+# class Market(Base):
+#
+#     __tablename__ = 'market'
+#
+#     id = Column(Integer, primary_key=True)
+#     ip_id = Column(Integer, index=True)
+#     ip_type = Column(Integer, index=True) # 0 pic 1 music 2 video 3 doc
+#     manager_id = Column(Integer, index=True) # the person who put on market must have share of the ip
+#     price = Column(Integer) # price
+#     sell_type = Column(Integer, index=True) # 0 not available ; 1 for use ; 2 for copyrights
 
 # 我喜欢的
 class Like(Base):
@@ -102,8 +101,10 @@ class IP(Base):
     feature_hash = Column(String(256)) # feature hash of the ip
     ipfs_hash = Column(String(256)) # ipfs location
     use_sell_count = Column(Integer) # sell count for self usage
-    copyright_sell_count = Column(Integer) # sell count for copyright shares
+    # copyright_sell_count = Column(Integer) # sell count for copyright shares
     transactions = relationship('Transaction', backref = 'ip')
+    sell_type = Column(Integer, index=True) # 0 not available ; 1 for use ; 2 for copyrights
+    price = Column(Integer) # price
     tags = relationship("Tag", secondary=tag_ip,backref="ips") #=> 会在Tag中加一个ips属性 获取包含该tag的所有ip的list
 
     def __repr__(self):
@@ -122,16 +123,17 @@ class Transaction(Base):
 
     id = Column(Integer, primary_key=True)
     ip_id = Column(Integer, ForeignKey('ip.id'))
-    transac_type = Column(Integer) # 0 create  1 ip transaction 2 use transaction
-    transac_hash = Column(String(256)) # eth transaction hash
+    transac_type = Column(Integer, index=True) # 0 create  1 use transaction 2 ip transaction
+    transac_hash = Column(String(256), index=True) # eth transaction hash
     year = Column(Integer)
     month = Column(Integer)
     day = Column(Integer)
     hour = Column(Integer)
     minute = Column(Integer)
     sec = Column(Integer)
-    from_user_id = Column(Integer)
-    to_user_id = Column(Integer)
+    from_user_id = Column(Integer, index=True)
+    to_user_id = Column(Integer, index=True)
+    price = Column(Integer) # price
 
 
     def __repr__(self):

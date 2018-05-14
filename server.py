@@ -34,6 +34,7 @@ if __name__ == "__main__":
             (r"/uploadmywork", handlers.post_upload_mywork),
             (r"/soundmart", handlers.post_soundmart),
             (r"/register", handlers.post_register),
+            (r"/buysound", handlers.post_buywork),
         ],
         template_path=os.path.join(os.path.dirname(__file__), "www"),
         static_path=os.path.join(os.path.dirname(__file__), "www/static")

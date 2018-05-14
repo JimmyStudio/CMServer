@@ -31,8 +31,59 @@ Session = sessionmaker(bind=engine)
 # 002 登录过期 token不存在
 # 003 文件类型错误
 # 004 手机号已注册
+# 005 代币余额不足
+# 006 重复购买
+# 007 无法购买自己的作品
 
 # 100 成功
+
+def buyWork(token, ip_id, from_user_id, price):
+    user = checkToken(token)
+    if user == '002':
+        return json.dumps({'err': '002', 'message': '登录已过期！'})
+    else:
+        if user.id == from_user_id :
+            return json.dumps({'err': '007', 'message': '无法购买您自己发布的作品！'})
+        else:
+            if user.coin < price:
+                return json.dumps({'err': '005', 'message': '代币余额不足！'})
+            else:
+                sessionx = Session()
+                trans = sessionx.query(Transaction).filter(
+                    and_(Transaction.ip_id == ip_id, Transaction.from_user_id == from_user_id,
+                         Transaction.transac_type == 1, Transaction.to_user_id == user.id)).all()
+                if len(trans) > 0:
+                    return json.dumps({'err': '006', 'message': '请勿重复购买！'})
+                else:
+                    session1 = Session()
+                    coin1 = user.coin - price
+                    session1.query(User).filter(User.id == user.id).update({User.coin: coin1})
+                    session1.commit()
+
+                    session2 = Session()
+                    user2 = session2.query(User).filter(User.id == from_user_id).first()
+                    coin2 = user2.coin + price
+                    session2.query(User).filter(User.id == from_user_id).update({User.coin: coin2})
+                    session2.commit()
+
+                    session = Session()
+                    tm = tool.getTime()
+                    transc = Transaction(
+                        ip_id=ip_id,
+                        transac_type=1,  # usage
+                        year=tm[0],
+                        month=tm[1],
+                        day=tm[2],
+                        hour=tm[3],
+                        minute=tm[4],
+                        sec=tm[5],
+                        from_user_id=from_user_id,
+                        to_user_id=user.id,
+                        price=price
+                    )
+                    session.add(transc)
+                    session.commit()
+                    return json.dumps({'err': '100', 'message': '购买成功'})
 
 
 def uploadWork(token, local_path, name, brief, cover_image_path, price, sell_type, ip_type=1):
@@ -42,7 +93,7 @@ def uploadWork(token, local_path, name, brief, cover_image_path, price, sell_typ
     else:
         # generate duration
         fn = local_path.split('/')[-1]
-        file_path = os.path.join('../www/static/sounds', fn)
+        file_path = os.path.join('www/static/sounds', fn)
         audiofile = eyed3.load(file_path)
         duration = audiofile.info.time_secs
         # generate feature_hash
@@ -91,25 +142,59 @@ def getMyWorks(token):
     if user == '002':
         return json.dumps({'err':'002', 'message':'登录已过期'})
     else:
-        retlist = []
+        sendlist = []
         session = Session()
         ips = session.query(IP).filter(IP.sender_id == user.id).all()
-        for ip in ips:
-            ip_dict = copy.deepcopy(ip.__dict__)
-            del ip_dict['_sa_instance_state']
-            ip_dict['price'] = None
-            ip_dict['duration'] = tool.conver_sec(ip_dict['duration'])
-            if ip.sell_type == 1:
-                ip_dict['price'] = ip.price
+        for ip_info in ips:
+            ret = copy.deepcopy(ip_info.__dict__)
+            del ret['_sa_instance_state']
+            ret['duration'] = tool.conver_sec(ret['duration'])
+            # count usage transc
+            use_sell_count = 0
+            for transc in ip_info.transactions:
+                if transc.transac_type == 1:
+                    use_sell_count += 1
+            ret['use_sell_count'] = use_sell_count
             tags = []
-            # ip 标签
-            for tag in ip.tags:
+            for tag in ip_info.tags:
                 tg = copy.deepcopy(tag.__dict__)
                 del tg['_sa_instance_state']
                 tags.append(tg)
-            ip_dict['tags'] = tags
-            retlist.append(ip_dict)
-        return json.dumps({'err':'100', 'message':'成功', 'list': retlist})
+            # 创建者信息
+            ret['author_name'] = user.username
+            ret['tags'] = tags
+            sendlist.append(ret)
+        buylist = []
+        # session2 = Session()
+        trans = session.query(Transaction).filter(and_(Transaction.transac_type == 1, Transaction.to_user_id == user.id)).all()
+        temp = {}
+        for transc in trans:
+            ip_info = session.query(IP).filter(IP.id == transc.ip_id).first()
+            if ip_info.feature_hash in temp.keys():
+                break
+            else:
+                temp[ip_info.feature_hash] = True
+                ret = copy.deepcopy(ip_info.__dict__)
+                del ret['_sa_instance_state']
+                ret['duration'] = tool.conver_sec(ret['duration'])
+                # count usage transc
+                use_sell_count = 0
+                for transc in ip_info.transactions:
+                    if transc.transac_type == 1:
+                        use_sell_count += 1
+                ret['use_sell_count'] = use_sell_count
+                tags = []
+                for tag in ip_info.tags:
+                    tg = copy.deepcopy(tag.__dict__)
+                    del tg['_sa_instance_state']
+                    tags.append(tg)
+                # 创建者信息
+                user_info = session.query(User).filter(User.id == ip_info.sender_id).first()
+                ret['author_name'] = user_info.username
+                ret['tags'] = tags
+                buylist.append(ret)
+
+        return json.dumps({'err':'100', 'message':'成功', 'sendlist': sendlist, 'buylist':buylist})
 
 
 def logout(token):
@@ -207,7 +292,14 @@ def get_sounds(token, limit=0, type=1):
         ret = copy.deepcopy(ip_info.__dict__)
         del ret['_sa_instance_state']
         ret['duration'] = tool.conver_sec(ret['duration'])
+        # count usage transc
+        use_sell_count = 0
+        for transc in ip_info.transactions:
+            if transc.transac_type == 1:
+                use_sell_count += 1
+        ret['use_sell_count'] = use_sell_count
         tags = []
+
         # ip 标签
         for tag in ip_info.tags:
             tg = copy.deepcopy(tag.__dict__)
@@ -233,7 +325,7 @@ def get_sounds(token, limit=0, type=1):
 
 
 if __name__ == "__main__":
-    print(json.loads(getMyWorks('d52b43143faf70237fd59944862b2055')))
+    print(json.loads(getMyWorks('b0c5e35e3ac0d75fd520de00c801ad56')))
     # uploadWork(token='d52b43143faf70237fd59944862b2055',
     #            local_path='/static/sounds/9711.mp3',
     #            name='发生该地块',

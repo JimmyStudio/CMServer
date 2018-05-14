@@ -18,6 +18,24 @@ import os
 from database import DBhelper
 
 # arg:
+## token
+## ip_id
+## form
+## price
+class post_buywork(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        token = self.get_argument('token')
+        ip_id = self.get_argument('ip_id')
+        from_user_id = self.get_argument('from_user_id')
+        price = self.get_argument('price')
+        ret = DBhelper.buyWork(token, ip_id, from_user_id, price)
+        self.write(ret)
+        self.finish()
+
+# arg:
 ## phone
 ## password
 class post_register(tornado.web.RequestHandler):

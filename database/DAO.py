@@ -136,10 +136,6 @@ class Transaction(Base):
     price = Column(Integer) # price
 
 
-    def __repr__(self):
-        return '%s(%r)' % (self.__class__.__name__, self.ipfs_hash)
-
-
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
     # Session = sessionmaker(bind=engine)

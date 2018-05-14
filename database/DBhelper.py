@@ -64,7 +64,7 @@ def buyWork(token, ip_id, from_user_id, price):
                     and_(Transaction.ip_id == ip_id, Transaction.from_user_id == from_user_id,
                          Transaction.transac_type == 1, Transaction.to_user_id == user.id)).all()
                 if len(trans) > 0:
-                    return json.dumps({'err': '006', 'message': '请勿重复购买！'})
+                    return json.dumps({'err': '006', 'message': '您已购买过该作品，请勿重复购买！'})
                 else:
                     session1 = Session()
                     coin1 = user.coin - price
@@ -225,7 +225,7 @@ def register(phone, password):
     session = Session()
     users = session.query(User).filter(User.phone == phone).all()
     if len(users) == 1:
-        return json.dumps({'err': '004', 'message': '手机号已注册!'})
+        return json.dumps({'err': '004', 'message': '该手机号已被注册，请登录或更换手机号再试!'})
     else:
         hpw = hashlib.md5()
         hpw.update(password.encode(encoding='utf-8'))

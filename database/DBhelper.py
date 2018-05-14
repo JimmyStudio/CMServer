@@ -20,6 +20,7 @@ from utils import tool
 import eyed3
 import os
 import datetime as dt
+import random
 
 # file_path = os.path.join('www/static/sounds', '10049.mp3')
 # audiofile = eyed3.load(file_path)
@@ -143,7 +144,13 @@ def uploadWork(token, local_path, name, brief, cover_image_path, price, sell_typ
         )
         session2.add(transc)
         session2.commit()
-        return json.dumps({'err':'100', 'message':'成功'})
+
+        award = random.randint(0, 20)
+        coin = user.coin + award
+        session3 = Session()
+        session3.query(User).filter(User.id == user.id).update({User.coin: coin})
+        session3.commit()
+        return json.dumps({'err':'100', 'message':'成功', 'award': award})
 
 
 def getMyWorks(token):

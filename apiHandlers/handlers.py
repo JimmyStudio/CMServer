@@ -154,7 +154,7 @@ class upload_handler(tornado.web.RequestHandler):
         file_metas = self.request.files["upload_file"]  # 获取上传文件信息 fromdata => upload_image
         for meta in file_metas:  # 循环文件信息
             file_name = meta['filename']  # 获取文件的名称
-            print(meta['content_type'])
+            # print(meta['content_type'])
             if meta['content_type'] == 'image/jpeg':
                 file_path = os.path.join('www/static/images', file_name)
             elif meta['content_type'] == 'audio/mp3':

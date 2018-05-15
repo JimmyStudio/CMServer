@@ -269,7 +269,7 @@ def register(phone, password):
                     brief='暂无简介',
                     eth_address=eth_address,
                     email = None,
-                    coin = 0,
+                    coin = 2000,
                     portrait_path = None
                     )
         user_dict = copy.deepcopy(user.__dict__)

@@ -13,7 +13,9 @@ __author__ = 'Jimmy'
 
 from web3 import Web3, HTTPProvider
 from web3.contract import ConciseContract
-from utils import etc
+# from utils import etc
+
+default_pw = '123'
 
 config = {
     "abi": [
@@ -94,7 +96,7 @@ config = {
     }
   ],
     "address": "0x306daeba454be7aeaccbbdaeb1b950233a851d93",
-    # "address": "0xe7afd0b0450b0e6fc1d717398b1ade2032128e3d",
+    # "address": "0xe7afd0b0450b0e6fc1d717398b1ade2032128e3d", # in server
 }
 
 # def update_copyright(ipfs_address,id_in_server,cp_hash,owner,share_integer,share_decimals):
@@ -112,8 +114,8 @@ config = {
 
 def new_account():
     web3 = Web3(HTTPProvider('http://127.0.0.1:8545'))
-    addr = web3.personal.newAccount(etc.default_pw)
-    web3.personal.unlockAccount(addr, etc.default_pw)
+    addr = web3.personal.newAccount(default_pw)
+    web3.personal.unlockAccount(addr, default_pw)
     return addr
 
 def eth_balance(addr):

@@ -21,7 +21,7 @@ import eyed3
 import os
 import datetime as dt
 import random
-
+from utils import contract as ct
 # file_path = os.path.join('www/static/sounds', '10049.mp3')
 # audiofile = eyed3.load(file_path)
 # print(u'时长为：{}秒'.format(audiofile.info.time_secs))
@@ -101,11 +101,15 @@ def buyWork(token, ip_id, from_user_id, price):
                     session2.query(User).filter(User.id == from_user_id).update({User.coin: coin2})
                     session2.commit()
 
+                    # 交易后代币互转
+                    th = ct.transfer(user.eth_address, user2.eth_address, price)
+
                     session = Session()
                     tm = tool.getTime()
                     transc = Transaction(
                         ip_id=ip_id,
                         transac_type=1,  # usage
+                        transac_hash=th,
                         year=tm[0],
                         month=tm[1],
                         day=tm[2],
@@ -151,12 +155,22 @@ def uploadWork(token, local_path, name, brief, cover_image_path, price, sell_typ
         session.add(ip)
         session.commit()
 
+        award = random.randint(0, 20)
+        coin = user.coin + award
+        session3 = Session()
+        session3.query(User).filter(User.id == user.id).update({User.coin: coin})
+        session3.commit()
+
+        # 奖励代币作为发布作品的交易地址
+        th = ct.generate_token(user.eth_address, award)
+
         session2 = Session()
         new_ip = session.query(IP).filter(IP.feature_hash == feature_hash).first()
         tm = tool.getTime()
         transc = Transaction(
             ip_id = new_ip.id,
             transac_type = 0, # create
+            transac_hash = th,
             year = tm[0],
             month = tm[1],
             day = tm[2],
@@ -170,11 +184,6 @@ def uploadWork(token, local_path, name, brief, cover_image_path, price, sell_typ
         session2.add(transc)
         session2.commit()
 
-        award = random.randint(0, 20)
-        coin = user.coin + award
-        session3 = Session()
-        session3.query(User).filter(User.id == user.id).update({User.coin: coin})
-        session3.commit()
         return json.dumps({'err':'100', 'message':'成功', 'award': award})
 
 
@@ -260,7 +269,9 @@ def register(phone, password):
         token = hpw.hexdigest()
 
         username = '用户' + phone[:3] + '****' + phone[7:]
-        eth_address = '0x298A7CEd882d922D49B5328397Be60C1FE9d4BDb'
+        # 创建新用户 默认发放2000JMT
+        eth_address = ct.new_account()
+        ct.generate_token(eth_address, 2000)
 
         user = User(username=username,
                     phone=phone,

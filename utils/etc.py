@@ -16,3 +16,7 @@ mysql_passwd = '846880'
 mysql_host = 'localhost'
 mysql_port = 3306
 host_name = 'cmdb'
+
+
+# eth
+default_pw = '123'

@@ -95,7 +95,7 @@ config = {
       "type": "function"
     }
   ],
-    "address": "0x306daeba454be7aeaccbbdaeb1b950233a851d93",
+    "address": "0xbfa2e6a3096f9c9b94b8b135fc790b6539176cc0",
     # "address": "0xe7afd0b0450b0e6fc1d717398b1ade2032128e3d", # in server
 }
 
@@ -122,9 +122,9 @@ def eth_balance(addr):
     web3 = Web3(HTTPProvider('http://127.0.0.1:8545'))
     return web3.eth.getBalance(addr)/1000000000000000000
 
-def transaction_info(addr):
+def transaction_info(th):
     web3 = Web3(HTTPProvider('http://127.0.0.1:8545'))
-    return web3.eth.getTransaction(addr)
+    return web3.eth.getTransaction(th)
 
 def block_number():
     web3 = Web3(HTTPProvider('http://127.0.0.1:8545'))
@@ -158,12 +158,12 @@ def generate_token(_to, _value):
     return transact_hash
 
 if __name__ == "__main__":
-    addr = new_account()
-    tx = generate_token(addr, 1000)
-    print(transaction_info(tx))
-    tx = generate_token(addr, 1000)
-    tx = generate_token(addr, 1000)
-    print(balance_of(addr))
+
+    block = block_info(1)
+    print(block)
+
+    tran = transaction_info('0x630a9297e03f280db326fc874d87bfa9d91237abaa63989fb22af0788196597d')
+    print(tran)
 
     # print(generate_token(owner, 100000))
     # print(balance_of(owner))

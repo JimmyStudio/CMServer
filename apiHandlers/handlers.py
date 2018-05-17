@@ -16,6 +16,18 @@ import tornado.gen
 import json
 import os
 from database import DBhelper
+from database import mongo
+
+# arg:
+class get_blocks(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def get(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        lst = mongo.get_all_blocks_info()
+        ret = json.dumps({'err': '100', 'message': '成功！', 'blocks':lst})
+        self.write(ret)
+        self.finish()
 # arg:
 ## token
 ## ip_id

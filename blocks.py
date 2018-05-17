@@ -13,6 +13,5 @@ __author__ = 'Jimmy'
 
 from database import mongo
 
-
 if __name__ == "__main__":
-    print(mongo.get_all_blocks_info())
+    mongo.insert_block_info()

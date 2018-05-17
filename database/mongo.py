@@ -16,8 +16,8 @@ from utils import contract
 import time
 import copy
 client = pymongo.MongoClient(host='127.0.0.1', port=27017)
-db_auth = client.admin
-db_auth.authenticate("jimmy", "846880")
+# db_auth = client.admin
+# db_auth.authenticate("jimmy", "846880")
 db = client.chain
 
 def insert_block_info():

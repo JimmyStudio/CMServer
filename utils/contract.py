@@ -95,8 +95,8 @@ config = {
       "type": "function"
     }
   ],
-    "address": "0xbfa2e6a3096f9c9b94b8b135fc790b6539176cc0",
-    # "address": "0xe7afd0b0450b0e6fc1d717398b1ade2032128e3d", # in server
+    # "address": "0xbfa2e6a3096f9c9b94b8b135fc790b6539176cc0",
+    "address": "0x5bab432047d74cbe78c37dea0d18ba8a50f9f790", # in server
 }
 
 # def update_copyright(ipfs_address,id_in_server,cp_hash,owner,share_integer,share_decimals):
@@ -158,12 +158,8 @@ def generate_token(_to, _value):
     return transact_hash
 
 if __name__ == "__main__":
-
-    block = block_info(1)
-    print(block)
-
-    tran = transaction_info('0x630a9297e03f280db326fc874d87bfa9d91237abaa63989fb22af0788196597d')
-    print(tran)
-
+    web3 = Web3(HTTPProvider('http://127.0.0.1:8545'))
+    owner = web3.eth.accounts[0]
+    print(eth_balance(owner))
     # print(generate_token(owner, 100000))
     # print(balance_of(owner))

@@ -19,6 +19,19 @@ from database import DBhelper
 from database import mongo
 
 # arg:
+# hash: block hash
+class post_block_info(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def get(self):
+        self.set_header('Access-Control-Allow-Origin', '*')
+        bh = self.get_argument('hash')
+        block = mongo.get_block_info(bh)
+        ret = json.dumps({'err': '100', 'message': '成功！', 'block':block})
+        self.write(ret)
+        self.finish()
+
+# arg:
 class get_blocks(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @tornado.gen.engine

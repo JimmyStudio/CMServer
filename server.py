@@ -38,6 +38,7 @@ if __name__ == "__main__":
             (r"/userinfo", handlers.post_user_info),
             (r"/like", handlers.post_like),
             (r"/blocks", handlers.get_blocks),
+            (r"/blockinfo", handlers.post_block_info),
         ],
         template_path=os.path.join(os.path.dirname(__file__), "www"),
         static_path=os.path.join(os.path.dirname(__file__), "www/static")

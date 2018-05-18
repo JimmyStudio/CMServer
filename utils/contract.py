@@ -95,8 +95,8 @@ config = {
       "type": "function"
     }
   ],
-    # "address": "0xbfa2e6a3096f9c9b94b8b135fc790b6539176cc0",
-    "address": "0x5bab432047d74cbe78c37dea0d18ba8a50f9f790", # in server
+    "address": "0xb925cf2f15af95d968e0cbb82cea4f67b60108f2",
+    # "address": "0x5bab432047d74cbe78c37dea0d18ba8a50f9f790", # in server
 }
 
 # def update_copyright(ipfs_address,id_in_server,cp_hash,owner,share_integer,share_decimals):

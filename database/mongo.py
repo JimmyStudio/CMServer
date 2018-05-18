@@ -33,9 +33,35 @@ def insert_block_info():
             bi = contract.block_info(bn)
             info = copy.deepcopy(bi.__dict__)
             db.block.insert(info)
+            for th in info['transactions']:
+                th_info = contract.transaction_info(th)
+                if th_info:
+                    th_info_dic = copy.deepcopy(th_info.__dict__)
+                    db.transaction.insert(th_info_dic)
             bn += 1
         time.sleep(15)
 
+
+def get_block_info(hx):
+    res = db.block.find({'hash':hx})
+    while True:
+        try:
+            temp = next(res)
+            del temp['_id']
+        except StopIteration:
+            break
+    trans = []
+    for th in temp['transactions']:
+        trans_res = db.transaction.find({'hash': th})
+        while True:
+            try:
+                tempx = next(trans_res)
+                del tempx['_id']
+                trans.append(tempx)
+            except StopIteration:
+                break
+    temp['trans'] = trans
+    return temp
 
 def get_all_blocks_info():
     res = db.block.find().sort("number", pymongo.DESCENDING)
@@ -48,3 +74,6 @@ def get_all_blocks_info():
         except StopIteration:
             break
     return list
+
+if __name__ == "__main__":
+    print(get_block_info('0x4ee9fecd5dd74f8cdd0fd4a43457845e5f992dfdd7428e2ab8735270c926e532'))
